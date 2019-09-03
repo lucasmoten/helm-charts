@@ -143,10 +143,10 @@ sidecar:
       value: '/services/catalog/{{ .Values.global.catalog.version }}'
     data_source:
       type: value
-      value: ''
+      value: '{{ .Values.catalog.source | quote }}'
     debug:
       type: value
-      value: ''
+      value: '{{ .Values.catalog.debug | quote }}'
     xds_server_address:
       type: value
       value: 'xds.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.xds.port }}'

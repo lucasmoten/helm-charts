@@ -126,6 +126,33 @@ sidecar:
     kafka_topic:
       type: value
       value: 'gm-catalog'
+    xds_cluster:
+      type: value
+      value: '{{ .Values.global.xds.cluster | quote }}'
+    xds_host:
+      type: value
+      value: 'xds.{{ .Release.Namespace }}.svc.cluster.local'
+    xds_port:
+      type: value
+      value: '18000'
+    zk_addrs:
+      type: value
+      value: '{{ template "greymatter.exhibitor.address" . }}'
+    zk_announce_path:
+      type: value
+      value: '/services/catalog/{{ .Values.global.catalog.version }}'
+    data_source:
+      type: value
+      value: ''
+    debug:
+      type: value
+      value: ''
+    xds_server_address:
+      type: value
+      value: 'xds.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.xds.port }}'
+    zk_host:
+      type: value
+      value: '{{template "greymatter.exhibitor.address" .}}'
 
   # Set this to true if you are attempting to deploy Catalog by itself.
   # Ideally, catalog is deployed as a dependency to Grey Matter, which creates the

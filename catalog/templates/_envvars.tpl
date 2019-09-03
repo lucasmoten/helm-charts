@@ -1,22 +1,24 @@
-{{/* envvar take a dictionary of name, value, and top as arguments, and generates a single environment variable from it. */}}
-{{/* Top must be the scope of the top of a named template or any scope which includes the default values, namely .Template (since we use the `tpl` function in this template, .Template.BasePath is required for some reason) */}}
-{{- define "envvar" }}
-    {{- $envName := index . "name" }}
-    {{- $e := index . "value" }}
-    {{- $top := index . "top" }}
-        {{- if eq $e.type "secret" }}
+# Use this to insert envars (values, secrets, and template names)
+# {{- include "envvars" (dict "envvar" .Values.cogito.envvars "top" $) | indent 12 }}
+{{- define "envvars" }}
+  {{- $e := index . "envvar" }}
+  {{- $t := index . "top" }}
+  {{- range $name, $envvar := $e }}
+    {{- $envName := $name | upper | replace "." "_" | replace "-" "_" }}
+      {{- if eq $envvar.type "secret" }}
 - name: {{ $envName }}
   valueFrom:
     secretKeyRef:
-      name: {{ $e.secret }}
-      key: {{ $e.key }}
-          {{- else if eq $e.type "value" }}
-          {{- /* The following removes any undefined values. At this stage, it means both the local and global values are undefined, so its best to just get rid of it */}}
-            {{- if (tpl $e.value $top) ne "" }}
+        name: {{ tpl $envvar.secret $t }}
+        key: {{ tpl $envvar.key $t }}
+      {{- else if eq $envvar.type "value" }}
 - name: {{ $envName }}
-  value: {{ tpl $e.value $top | quote }} 
-            {{- end }}
-          {{- end }}
+  value: {{ tpl $envvar.value $t | quote }}
+      {{- else if eq $envvar.type "template" }}
+- name: {{ $envName }}
+  value: {{ include $envvar.value $t }}
+      {{- end }}
+  {{- end }}
 {{- end }}
 
 {{- /*  envvars loops through the global sidecar envvars and generates Kubernetes container env keys for both regular values and secrets from the local sidecar values and from the global values as a backup.
@@ -39,7 +41,7 @@ Most users should use the `indent` or `nindent` functions to automatically inden
     {{- range $name, $envvar := .Values.sidecar.envvars }}
           {{- $envName := $name | upper | replace "." "_" | replace "-" "_" }}
           {{- $args := dict "name" $envName "value" $envvar "top" $top }}
-          {{- include "envvar" $args }}
+          {{- include "envvars" $args }}
     {{- end }}
   {{- end }}
 {{- end }}

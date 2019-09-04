@@ -28,26 +28,7 @@ spec:
               containerPort: 9080
           env:
            {{- include "envvars" (dict "envvar" .Values.catalog.envvars "top" $) | indent 12 }}
-
-          # env:
-          #   - name: DATA_SOURCE
-          #     value: {{ .Values.catalog.source | quote }}
-          #   - name: DEBUG
-          #     value: {{ .Values.catalog.debug | quote }}
-          #   - name: PORT
-          #     value: '9080'
-          #   - name: XDS_SERVER_ADDRESS
-          #     value: 'xds.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.xds.port }}'
-          #   - name: ZK_HOST
-          #     value: {{template "greymatter.exhibitor.address" .}}
-            
-          #   {{- range $index, $service := .Values.catalog.services }}
-          #   {{- range $key, $val := $service }}
-          #   - name: "{{ $index | upper }}_{{ $key | upper}}"
-          #     value: "{{ tpl $val $ }}"
-          #   {{- end }}
-          #   {{- end }}
-            
+           
         - name: sidecar
           image: {{ tpl $.Values.sidecar.image $ }}
           imagePullPolicy: {{ .Values.sidecar.imagePullPolicy }}
@@ -63,19 +44,6 @@ spec:
 
           env:
            {{- include "envvars" (dict "envvar" .Values.sidecar.envvars "top" $) | indent 12 }}
-
-          # env:
-          # {{- include "greymatter.envvars" . | indent 10 }}
-          # - name: XDS_CLUSTER
-          #   value: {{ .Values.global.xds.cluster | quote }}
-          # - name: XDS_HOST
-          #   value: 'xds.{{ .Release.Namespace }}.svc.cluster.local'
-          # - name: XDS_PORT
-          #   value: '18000'
-          # - name: ZK_ADDRS
-          #   value: {{ template "greymatter.exhibitor.address" . }}
-          # - name: ZK_ANNOUNCE_PATH
-          #   value: '/services/catalog/{{ .Values.global.catalog.version }}'
 
           volumeMounts:
             - name: sidecar

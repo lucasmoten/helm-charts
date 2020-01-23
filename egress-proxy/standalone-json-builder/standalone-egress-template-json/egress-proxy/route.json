@@ -1,0 +1,7 @@
+{
+  "zone_key": "zone-default-zone",
+  "domain_key": "domain-REPLACESTRING",
+  "route_key": "route-REPLACESTRING",
+  "path": "/",
+  "shared_rules_key": "shared-rules-REPLACESTRING"
+}

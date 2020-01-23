@@ -1,0 +1,13 @@
+{
+  "route_key": "route-egress-to-partner-mesh",
+  "domain_key": "domain-partner-mesh",
+  "zone_key": "zone-default-zone",
+  "path": "/",
+  "prefix_rewrite": "",
+  "redirects": null,
+  "shared_rules_key": "shared-rules-partner-mesh",
+  "rules": null,
+  "response_data": {},
+  "cohort_seed": null,
+  "retry_policy": null
+}

@@ -1,0 +1,13 @@
+{
+  "zone_key": "zone-default-zone",
+  "shared_rules_key": "shared-rules-REPLACESTRING",
+  "name": "shared-rules-REPLACESTRING",
+  "default": {
+    "light": [
+      {
+        "cluster_key": "cluster-REPLACESTRING",
+        "weight": 1
+      }
+    ]
+  }
+}

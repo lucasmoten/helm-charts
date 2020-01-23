@@ -1,0 +1,1 @@
+Grey Matter Egress Proxy {{ .Chart.AppVersion }} has been installed.

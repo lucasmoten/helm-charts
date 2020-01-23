@@ -1,0 +1,64 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: {{ .Values.name | default "egress-proxy" }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicas | default 1}}
+  selector:
+    matchLabels:
+      app: {{ .Values.name | default "egress-proxy"}}
+      deployment: {{ .Values.name | default "egress-proxy"}}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.name | default "egress-proxy"}}
+        deployment: {{ .Values.name | default "egress-proxy"}}
+    spec:
+      containers:
+      - name: {{ .Values.name | default "egress-proxy"}}
+        image: {{ .Values.image }}
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        {{- if .Values.resources }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        {{- end }}
+        env:
+        {{- include "envvars" . | indent 8 }}
+        ports:
+        - name: proxy
+          containerPort: 8080
+        - name: metrics
+          containerPort: 8081
+        volumeMounts:
+        {{- if .Values.global.spire.enabled }}
+        {{- include "sidecar_volume_mounts" . | indent 8 }}
+        {{- else if and (not .Values.global.spire.enabled) (.Values.global.mesh_tls.use_provided_certs) }}
+        {{- include "sidecar_volume_certs_mount" . | indent 8 }}
+        {{- end }}
+        - name: egress
+          mountPath: {{ .Values.certificates.egress.mountPath }}
+      {{- if .Values.global.consul.enabled }}
+      {{- $data := dict "Values" .Values "ServiceName" "edge" }}
+      {{- include "consul.agent" $data | nindent 6 }}
+      {{- end }}      
+      {{- if .Values.imagePullSecret }}
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret | default "docker.secret" }}
+      {{- end }}
+      volumes:
+      {{- if .Values.global.spire.enabled }}
+      {{- include "sidecar_volumes" . | indent 6 }}
+      {{- else if and (not .Values.global.spire.enabled) (.Values.global.mesh_tls.use_provided_certs) }}
+      volumes:
+      {{- include "sidecar_certs_volumes" . | indent 6 }}
+      {{- end }}
+      {{- if .Values.global.consul.enabled }}
+      - name: data-consul
+        emptyDir: {}
+      - name: config-consul
+        emptyDir: {}
+      {{- end }}
+      - name: egress
+        secret:
+          secretName: {{ .Values.certificates.egress.name }}

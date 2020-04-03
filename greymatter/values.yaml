@@ -192,7 +192,8 @@ global:
       controlEnabled: true
       name: 'Grey Matter Control API'
       serviceName: 'gm-control-api'
-      observablesEnabled: false
+      observablesEnabled: true
+      useKafka: true
       port: 5555
       enableInstanceMetrics: 'true'
       capability: 'Mesh'

@@ -19,14 +19,22 @@
     "gm.metrics"
   ],
   "proxy_filters": {
-    {{-  if (.service.observablesEnabled) }}
-    "gm_observables": {
-      "useKafka": true,
-      "topic": "{{.service.serviceName}}",
-      "eventTopic": "{{ .Values.global.observables.topic }}",
-      "kafkaServerConnection": "{{ .Values.global.observables.kafkaServerConnection }}"
-    },
-    {{- end }}
+{{ if (.service.observablesEnabled) }}
+{{ if (.service.useKafka) }}
+  "gm_observables": {
+    "loglevel": "info",
+    "emitFullResponse": "false",
+    "topic": "{{- .service.serviceName }}",
+    "eventTopic": "{{- .Values.global.observables.topic }}",
+    "kafkaServerConnection": "{{- .Values.global.observables.kafkaServerConnection }}"
+  }
+{{ else }} 
+  "gm_observables": {
+    "loglevel": "info",
+    "emitFullResponse": "false",
+},
+{{ end }}
+{{ end }}
     {{- if .Values.global.mesh_tls.enabled }}
     "gm_impersonation": {
       "servers": "{{ .Values.global.edge.egressDn }}{{- if not (eq .service.serviceName "dashboard") -}}|{{ .Values.global.mesh_tls.dn }}{{- end -}}"

@@ -35,3 +35,7 @@ values-validation:
 		echo "rds.enabled in secrets/values.yaml and sense/values.yaml DO NOT MATCH.  Secrets will not be created"; \
 		exit 2;\
 	fi
+
+.PHONY: standalone-data-secrets
+standalone-data-secrets: copy-credentials
+	helm install secrets . -f credentials.yaml -f ../global.yaml -n data-standalone --set data.deploy.standalone=true

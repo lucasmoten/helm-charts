@@ -38,4 +38,4 @@ values-validation:
 
 .PHONY: standalone-data-secrets
 standalone-data-secrets: copy-credentials
-	helm install secrets . -f credentials.yaml -f ../global.yaml -n data-standalone --set data.deploy.standalone=true
+	helm install standalone-data-secrets . -f credentials.yaml -f ../global.yaml --set data.deploy.standalone=true

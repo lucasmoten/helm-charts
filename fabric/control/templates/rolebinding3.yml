@@ -2,8 +2,8 @@
 kind:  RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: {{ .Values.control.service_account.name }}-rolebinding
-  namespace: {{ .Release.Namespace }}
+  name: {{ .Values.control.service_account.name }}-rolebinding-gm
+  namespace: greymatter
 subjects:
 - kind: ServiceAccount
   name: {{ .Values.control.service_account.name }}

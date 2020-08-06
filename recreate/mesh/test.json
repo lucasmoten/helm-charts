@@ -1,0 +1,7 @@
+{
+    "zone_key": "zone-default-zone",
+    "cluster_key": "fib-test-cluster",
+    "name": "fibonacci-test-ns",
+    "instances": [],
+    "require_tls": false
+  }
